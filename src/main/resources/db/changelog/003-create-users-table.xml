@@ -10,7 +10,7 @@
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
 
-            <column name="name" type="varchar(255)">
+            <column name="full_name" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
 
@@ -22,8 +22,15 @@
                 <constraints nullable="false"/>
             </column>
 
+            <column name="created_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
 
+            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
 
+            <column name="deleted" type="bit(1)">
+                <constraints nullable="false"/>
+            </column>
 
         </createTable>
     </changeSet>
