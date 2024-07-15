@@ -1,13 +1,17 @@
 package com.aga.hms.infrastructure.store;
 
 import com.aga.hms.domain.UserStore;
+import com.aga.hms.domain.error.ErrorType;
 import com.aga.hms.domain.error.StructuredError;
+import com.aga.hms.infrastructure.TransactionalHms;
 import com.aga.hms.infrastructure.store.entities.UserEntity;
 import com.aga.hms.infrastructure.store.repositories.UserRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
+import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,14 +29,18 @@ public class DatabaseUserStore implements UserStore {
     }
 
     @Override
-    public Option<UserResult> findByEmail(findByEmailParams params) {
+    public Option<UserResult> find(findByEmailParams params) {
         return userRepository.findByEmail(params.getEmail())
                 .map(UserEntity::toStoreResult);
     }
 
     @Override
+    @TransactionalHms
     public Either<StructuredError, UserResult> save(saveUserParams params) {
-        return null;
+        return Try.of(() -> UserEntity.of(params))
+                .map(userRepository::save)
+                .toEither(new StructuredError("Couldn't save user", ErrorType.SERVER_ERROR))
+                .map(UserEntity::toStoreResult);
     }
 
     @Override

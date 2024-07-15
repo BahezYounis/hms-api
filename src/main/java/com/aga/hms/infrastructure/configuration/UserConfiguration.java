@@ -1,5 +1,6 @@
 package com.aga.hms.infrastructure.configuration;
 
+import com.aga.hms.domain.AddUserCommand;
 import com.aga.hms.domain.GetAllUsersQuery;
 import com.aga.hms.domain.UserStore;
 import org.springframework.context.annotation.Bean;
@@ -11,5 +12,10 @@ public class UserConfiguration {
     @Bean
     GetAllUsersQuery getAllUsersQuery(UserStore userStore) {
         return new GetAllUsersQuery(userStore);
+    }
+
+    @Bean
+    AddUserCommand addUserCommand(UserStore userStore) {
+        return new AddUserCommand(userStore);
     }
 }

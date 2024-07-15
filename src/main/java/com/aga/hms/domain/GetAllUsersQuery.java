@@ -32,7 +32,7 @@ public class GetAllUsersQuery {
         String password;
 
         static ItemOutput of(User user) {
-            return new ItemOutput(user.id(), user.fullName(), user.email(), user.password());
+            return new ItemOutput(user.id(), user.fullName(), user.email(), user.hashedPassword());
         }
     }
 }
