@@ -5,5 +5,6 @@ public enum ErrorType {
     NOT_FOUND_ERROR,
     SERVER_ERROR,
     UNAUTHORIZED_ERROR,
-    CONFLICT
+    CONFLICT,
+    UNPROCESSABLE_ENTITY
 }

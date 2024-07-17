@@ -12,7 +12,7 @@ public interface UserStore {
 
     Option<UserResult> find(findByIdParams params);
 
-    Option<UserResult> findByEmail(findByEmailParams params);
+    Option<UserResult> find(findByEmailParams params);
 
     Either<StructuredError, UserResult> save(saveUserParams params);
 
@@ -49,7 +49,7 @@ public interface UserStore {
         String password;
 
         static updateUserParams of(User user){
-            return new updateUserParams(user.id(), user.fullName(), user.email(), user.password());
+            return new updateUserParams(user.id(), user.fullName(), user.email(), user.hashedPassword());
         }
     }
 

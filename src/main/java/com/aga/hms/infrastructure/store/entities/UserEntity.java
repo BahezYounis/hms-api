@@ -18,7 +18,7 @@ import java.util.UUID;
 @Entity
 @Table(schema = "hms", name = "users")
 @SQLDelete(sql = "UPDATE hms SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
+//@Where(clause = "deleted=0")
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity {
