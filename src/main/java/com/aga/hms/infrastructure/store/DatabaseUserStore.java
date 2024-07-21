@@ -11,7 +11,7 @@ import io.vavr.control.Option;
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,8 +49,8 @@ public class DatabaseUserStore implements UserStore {
     }
 
     @Override
-    public List<UserResult> findAll() {
-        return userRepository.findAll().stream().map(UserEntity::toStoreResult).collect(Collectors.toList());
+    public List<UserResult> findAll(Specification<UserEntity> spec) {
+        return userRepository.findAll(spec).stream().map(UserEntity::toStoreResult).collect(Collectors.toList());
     }
 
 

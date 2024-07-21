@@ -1,10 +1,13 @@
 package com.aga.hms.domain;
 
 import com.aga.hms.domain.error.StructuredError;
+import com.aga.hms.infrastructure.store.entities.UserEntity;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import lombok.Value;
+import org.springframework.data.jpa.domain.Specification;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,15 +21,16 @@ public interface UserStore {
 
     Either<StructuredError, UserResult> update(updateUserParams params);
 
-    List<UserResult> findAll();
+    List<UserResult> findAll(Specification<UserEntity> spec);
+
 
     @Value
-    class findByIdParams{
+    class findByIdParams {
         UUID id;
     }
 
     @Value
-    class findByEmailParams{
+    class findByEmailParams {
         String email;
     }
 
@@ -35,20 +39,20 @@ public interface UserStore {
     }
 
     @Value
-    class saveUserParams{
+    class saveUserParams {
         String fullName;
         String email;
         String password;
     }
 
     @Value
-    class updateUserParams{
+    class updateUserParams {
         UUID id;
         String fullName;
         String email;
         String password;
 
-        static updateUserParams of(User user){
+        static updateUserParams of(User user) {
             return new updateUserParams(user.id(), user.fullName(), user.email(), user.hashedPassword());
         }
     }
@@ -59,7 +63,10 @@ public interface UserStore {
         String fullName;
         String email;
         String password;
+        Instant createdAt;
 
-        User toDomain(){return new User(id, fullName, email, password);}
+        User toDomain() {
+            return new User(id, fullName, email, password, createdAt);
+        }
     }
 }

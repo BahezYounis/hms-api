@@ -63,7 +63,8 @@ public class UserEntity {
                 id,
                 fullName,
                 email,
-                password
+                password,
+                createdAt
         );
     }
 

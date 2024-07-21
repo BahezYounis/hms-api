@@ -10,31 +10,26 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RequiredArgsConstructor
 public class AddUserCommand {
 
     private final UserStore userStore;
 
-    public Either<StructuredError, Output> execute(Input input){
-        return validateEmailExistence(input.getEmail())
+    public Either<StructuredError, Output> execute(Input input) {
+        return validateEmailExistence(
+                input.getEmail())
                 .flatMap(ignored -> userStore.save(input.toParams(input.getPassword())))
                 .map(UserStore.UserResult::toDomain)
                 .map(this::generateToken)
                 .map(Output::new);
-
     }
 
-    private Either<StructuredError, Void> validateEmailExistence(String email){
-        return userStore.find(new UserStore.findByEmailParams(email))
-                .fold(
-                        ()->Either.right(null),
-                        ignored -> Either.left(new StructuredError("User already created", ErrorType.CONFLICT))
-                );
+    private Either<StructuredError, Void> validateEmailExistence(String email) {
+        return userStore.find(
+                new UserStore.findByEmailParams(email))
+                .fold(() -> Either.right(null),
+                        ignored -> Either.left(new StructuredError("User already created", ErrorType.CONFLICT)));
     }
-
 
 
     private String generateToken(User user) {
@@ -56,11 +51,7 @@ public class AddUserCommand {
         String password;
 
         private UserStore.saveUserParams toParams(String hashedPassword) {
-            return new UserStore.saveUserParams(
-                    fullName,
-                    email,
-                    hashedPassword
-            );
+            return new UserStore.saveUserParams(fullName, email, hashedPassword);
         }
     }
 
