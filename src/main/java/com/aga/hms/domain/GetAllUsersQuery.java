@@ -17,20 +17,20 @@ public class GetAllUsersQuery {
     private final UserStore userStore;
 
 
-    public Output execute(UserFilterParams filterParams) {
+    public Output execute(Input input) {
 
         Specification<UserEntity> spec = Specification.where(null);
 
-        if (filterParams.fullName() != null && !filterParams.fullName().isEmpty()) {
-            spec = spec.and(UserSpecification.hasFullName(filterParams.fullName()));
+        if (input.fullName != null && !input.fullName.isEmpty()) {
+            spec = spec.and(UserSpecification.hasFullName(input.fullName));
         }
 
-        if (filterParams.email() != null && !filterParams.email().isEmpty()) {
-            spec = spec.and(UserSpecification.hasEmail(filterParams.email()));
+        if (input.email != null && !input.email.isEmpty()) {
+            spec = spec.and(UserSpecification.hasEmail(input.email));
         }
 
-        if (filterParams.startDate() != null && filterParams.endDate() != null) {
-            spec = spec.and(UserSpecification.createdBetween(filterParams.startDate(), filterParams.endDate()));
+        if (input.startDate != null && input.endDate != null) {
+            spec = spec.and(UserSpecification.createdBetween(input.startDate, input.endDate));
         }
 
         final var users = userStore.findAll(spec).stream()
@@ -39,6 +39,14 @@ public class GetAllUsersQuery {
                 .toList();
 
         return new Output(users);
+    }
+
+    @Value
+    public  static class Input {
+        String fullName;
+        String email;
+        LocalDateTime startDate;
+        LocalDateTime endDate;
     }
 
 
