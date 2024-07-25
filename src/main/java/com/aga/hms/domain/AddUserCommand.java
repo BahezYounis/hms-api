@@ -5,20 +5,18 @@ import com.aga.hms.domain.error.StructuredError;
 import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @RequiredArgsConstructor
 public class AddUserCommand {
 
     private final UserStore userStore;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordUtil passwordUtil;
 
     public Either<StructuredError, Output> execute(Input input) {
         return validateEmailExistence(
                 input.getEmail())
-                .flatMap(ignored -> userStore.save(input.toParams(passwordEncoder.encode(input.getPassword()))))
+                .flatMap(ignored -> userStore.save(input.toParams(passwordUtil.hash(input.getPassword()))))
                 .map(UserStore.UserResult::toDomain)
-                .map(this::generateToken)
                 .map(Output::new);
     }
 
@@ -27,11 +25,6 @@ public class AddUserCommand {
                 new UserStore.findByEmailParams(email))
                 .fold(() -> Either.right(null),
                         ignored -> Either.left(new StructuredError("User already created", ErrorType.CONFLICT)));
-    }
-
-
-    private User generateToken(User user) {
-        return user;
     }
 
     @Value

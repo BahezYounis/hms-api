@@ -2,6 +2,7 @@ package com.aga.hms.infrastructure.configuration;
 
 import com.aga.hms.domain.AddUserCommand;
 import com.aga.hms.domain.GetAllUsersQuery;
+import com.aga.hms.domain.PasswordUtil;
 import com.aga.hms.domain.UserStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +16,7 @@ public class UserConfiguration {
     }
 
     @Bean
-    AddUserCommand addUserCommand(UserStore userStore) {
-        return new AddUserCommand(userStore);
+    AddUserCommand addUserCommand(UserStore userStore, PasswordUtil passwordUtil) {
+        return new AddUserCommand(userStore, passwordUtil);
     }
 }

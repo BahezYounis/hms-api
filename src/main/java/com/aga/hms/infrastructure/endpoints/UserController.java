@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public AddResponse addUser(@Valid @RequestBody AddRequest request) {
         return addUserCommand.execute(new AddUserCommand.Input(request.fullName(), request.email(), request.password()))
                 .map(output -> new AddResponse(output.getUser()))
