@@ -3,7 +3,6 @@ package com.aga.hms.infrastructure.endpoints;
 
 import com.aga.hms.domain.AddUserCommand;
 import com.aga.hms.domain.GetAllUsersQuery;
-import com.aga.hms.domain.User;
 import com.aga.hms.infrastructure.error.ErrorStructureException;
 import com.aga.hms.infrastructure.validation.ValidPassword;
 import jakarta.validation.Valid;
@@ -53,7 +52,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public AddResponse addUser(@Valid @RequestBody AddRequest request) {
         return addUserCommand.execute(new AddUserCommand.Input(request.fullName(), request.email(), request.password()))
-                .map(output -> new AddResponse(output.getUser()))
+                .map(output -> new AddResponse(output.getFullName(), output.getEmail()))
                 .getOrElseThrow(ErrorStructureException::new);
     }
 
@@ -69,7 +68,7 @@ public class UserController {
             String password) {
     }
 
-    record AddResponse(User user) {
+    record AddResponse(String fullName, String email) {
     }
 
 }

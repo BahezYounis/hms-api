@@ -17,7 +17,7 @@ public class AddUserCommand {
                 input.getEmail())
                 .flatMap(ignored -> userStore.save(input.toParams(passwordUtil.hash(input.getPassword()))))
                 .map(UserStore.UserResult::toDomain)
-                .map(Output::new);
+                .map(user -> new Output(user.fullName(), user.email()));
     }
 
     private Either<StructuredError, Void> validateEmailExistence(String email) {
@@ -40,6 +40,7 @@ public class AddUserCommand {
 
     @Value
     public static class Output {
-        User user;
+        String fullName;
+        String email;
     }
 }
