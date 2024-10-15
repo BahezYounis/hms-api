@@ -3,12 +3,12 @@ package com.aga.hms.infrastructure.endpoints;
 
 import com.aga.hms.domain.AddUserCommand;
 import com.aga.hms.domain.GetAllUsersQuery;
+import com.aga.hms.domain.GetUserQuery;
+import com.aga.hms.infrastructure.endpoints.Requests.GetUsersRequest;
+import com.aga.hms.infrastructure.endpoints.Response.getUserResponse;
 import com.aga.hms.infrastructure.error.ErrorStructureException;
-import com.aga.hms.infrastructure.validation.ValidPassword;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +25,7 @@ public class UserController {
 
     private final GetAllUsersQuery getAllUsersQuery;
     private final AddUserCommand addUserCommand;
+    private final GetUserQuery getUserQuery;
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
@@ -48,24 +49,28 @@ public class UserController {
     record UserResponse(UUID id, String fullName, String email, Instant created) {
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public AddResponse addUser(@Valid @RequestBody AddRequest request) {
-        return addUserCommand.execute(new AddUserCommand.Input(request.fullName(), request.email(), request.password()))
-                .map(output -> new AddResponse(output.getFullName(), output.getEmail()))
-                .getOrElseThrow(ErrorStructureException::new);
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{userId}")
+    @Operation(summary = "this is for get user detail")
+    public getUserResponse getUser(@PathVariable UUID userId) {
+        final var output =  getUserQuery.execute(new GetUserQuery.Input(userId));
+        return new getUserResponse(
+                output.getId(),
+                output.getFullName(),
+                output.getEmail(),
+                output.getPassword(),
+                output.getCreatedAt(),
+                output.getUpdatedAt()
+        );
     }
 
-    record AddRequest(
-            @NotBlank(message = "Full name is required")
-            @Size(min = 4, max = 8, message = "Full name should be between 4 and 8 characters")
-            String fullName,
-            @NotBlank(message = "Email is required")
-            @Email(message = "Email should be valid")
-            String email,
-            @NotBlank(message = "Password is required")
-            @ValidPassword
-            String password) {
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public AddResponse addUser(@Valid @RequestBody GetUsersRequest request) {
+        return addUserCommand.execute(new AddUserCommand.Input(request.getFullName(), request.getEmail(), request.getPassword()))
+                .map(output -> new AddResponse(output.getFullName(), output.getEmail()))
+                .getOrElseThrow(ErrorStructureException::new);
     }
 
     record AddResponse(String fullName, String email) {

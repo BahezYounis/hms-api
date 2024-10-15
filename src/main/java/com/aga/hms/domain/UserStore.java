@@ -64,9 +64,11 @@ public interface UserStore {
         String email;
         String password;
         Instant createdAt;
+        Instant updatedAt;
+        Boolean deleted;
 
         User toDomain() {
-            return new User(id, fullName, email, password, createdAt);
+            return new User(id, fullName, email, password, createdAt, updatedAt);
         }
     }
 }

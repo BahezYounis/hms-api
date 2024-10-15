@@ -8,6 +8,6 @@ public record User(
         String fullName,
         String email,
         String hashedPassword,
-        Instant createdAt
-) {
+        Instant createdAt,
+        Instant updatedAt) {
 }
